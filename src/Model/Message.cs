@@ -108,23 +108,22 @@ namespace Aliyun.MQ.Model
             get { return this._properties; }
         }
 
-        public string GetProperty(string key)
+        public string GetProperty(string key,string @default = null)
         {
-            return this._properties[key];
+            if (string.IsNullOrEmpty(key)) { return @default; }
+            return this._properties.TryGetValue(key,out string value) ? value : @default;
         }
 
         public string MessageKey
         {
-            get { return this._properties[Constants.MESSAGE_PROPERTIES_MSG_KEY]; }
+            get => GetProperty(Constants.MESSAGE_PROPERTIES_MSG_KEY);
         }
 
         public long StartDeliverTime
         {
             get 
             {
-                return _properties.ContainsKey(Constants.MESSAGE_PROPERTIES_TIMER_KEY)
-                                  ? long.Parse(this._properties[Constants.MESSAGE_PROPERTIES_TIMER_KEY])
-                                      : 0;
+                return long.TryParse(GetProperty(Constants.MESSAGE_PROPERTIES_TIMER_KEY), out long value) ? value : 0;
             }
         }
 
@@ -132,15 +131,13 @@ namespace Aliyun.MQ.Model
         {
             get 
             {
-                return _properties.ContainsKey(Constants.MESSAGE_PROPERTIES_TRANS_CHECK_KEY)
-                                  ? uint.Parse(this._properties[Constants.MESSAGE_PROPERTIES_TRANS_CHECK_KEY])
-                                      : 0;
+                return uint.TryParse(GetProperty(Constants.MESSAGE_PROPERTIES_TRANS_CHECK_KEY), out uint value) ? value : 0;
             }
         }
 
         public String ShardingKey
         {
-            get { return this._properties[Constants.MESSAGE_PROPERTIES_SHARDING]; }
+            get => GetProperty(Constants.MESSAGE_PROPERTIES_SHARDING);
         }
 
         public override string ToString()
